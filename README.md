@@ -4,3 +4,8 @@ A Java-based Lost and Found management system designed for community and organiz
 Use-Case Diagram
 <img width="1440" height="2178" alt="image" src="https://github.com/user-attachments/assets/01ec7f1a-39d0-4716-a888-92364785f0a6" />
 
+Planned-Case Diagram
+<img width="1440" height="1394" alt="image" src="https://github.com/user-attachments/assets/dccb1835-5130-4055-be8b-1545013ba131" />
+
+
+

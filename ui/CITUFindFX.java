@@ -265,3 +265,76 @@ public class CITUFindFX extends Application {
         header.getChildren().add(rightGroup);
         return header;
     }
+    // ════════════════════════════════════════════════════════════════════════
+    //  SIDEBAR
+    // ════════════════════════════════════════════════════════════════════════
+    private VBox buildSidebar() {
+        VBox sidebar = new VBox(0);
+        sidebar.setPrefWidth(260);
+        sidebar.setStyle("-fx-background-color: " + Theme.MAROON_DARK + ";");
+
+        VBox logoSection = new VBox(4);
+        logoSection.setPadding(new Insets(28, 24, 24, 24));
+        logoSection.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, " + Theme.MAROON + ", " + Theme.MAROON_DARK + ");" +
+                        "-fx-border-color: transparent transparent rgba(255,255,255,0.12) transparent;" +
+                        "-fx-border-width: 0 0 1 0;"
+        );
+        Label logo = new Label("CITUFind");
+        logo.setStyle(
+                "-fx-text-fill: " + Theme.GOLD + ";" +
+                        "-fx-font-size: 28px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-family: 'Georgia';"
+        );
+        Label logoSub = new Label("Lost & Found");
+        logoSub.setStyle("-fx-text-fill: rgba(255,255,255,0.55); -fx-font-size: 12px;");
+        logoSection.getChildren().addAll(logo, logoSub);
+
+        VBox navSection = new VBox(4);
+        navSection.setPadding(new Insets(16, 12, 16, 12));
+        VBox.setVgrow(navSection, Priority.ALWAYS);
+
+        sidebar.getChildren().addAll(logoSection, navSection);
+        return sidebar;
+    }
+
+    private HBox buildSidebarUserBadge() {
+        HBox badge = new HBox(10);
+        badge.setPadding(new Insets(16, 20, 20, 20));
+        badge.setAlignment(Pos.CENTER_LEFT);
+        badge.setStyle(
+                "-fx-background-color: rgba(0,0,0,0.25);" +
+                        "-fx-border-color: rgba(255,255,255,0.1) transparent transparent transparent;" +
+                        "-fx-border-width: 1 0 0 0;"
+        );
+        Label avatar = new Label("👤");
+        avatar.setStyle("-fx-font-size: 22px;");
+        VBox info = new VBox(2);
+        Label nameL = new Label(Session.getCurrentUser().getName());
+        nameL.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px;");
+        Label roleL = new Label(Session.getCurrentUser().getRole());
+        roleL.setStyle("-fx-text-fill: rgba(255,255,255,0.55); -fx-font-size: 12px;");
+        info.getChildren().addAll(nameL, roleL);
+        badge.getChildren().addAll(avatar, info);
+        return badge;
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  REFRESH — coordinator: updates both the table and the stat labels
+    // ════════════════════════════════════════════════════════════════════════
+    private void refreshTableAndStats() {
+        List<Item> items = itemDAO.getAllItems();
+        manageItemsPage.refreshTable(items);
+
+        int total = items.size(), found = 0, lost = 0;
+        for (Item item : items) {
+            if (item.getStatus().toLowerCase().contains("found") ||
+                    item.getStatus().toLowerCase().contains("claim")) found++;
+            else lost++;
+        }
+        dashboardPage.getLblTotalItems().setText(String.valueOf(total));
+        dashboardPage.getLblFoundItems().setText(String.valueOf(found));
+        dashboardPage.getLblLostItems().setText(String.valueOf(lost));
+    }
+}

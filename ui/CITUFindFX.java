@@ -95,3 +95,123 @@ public class CITUFindFX extends Application {
         // LoginPage exposes the registerScene via a setter to allow this late binding.
         loginPage.setRegisterScene(registerScene);
     }
+
+   // ════════════════════════════════════════════════════════════════════════
+
+    //  MAIN DASHBOARD SHELL
+
+    // ════════════════════════════════════════════════════════════════════════
+
+    private void buildMainDashboard() {
+
+        // Archive old items (Admin only — unchanged logic)
+
+        if (Session.getCurrentUser().getRole().equalsIgnoreCase("Admin")) {
+
+            itemDAO.archiveOldItems();
+
+        }
+
+
+
+        BorderPane root = new BorderPane();
+
+        root.setStyle("-fx-background-color: " + Theme.BG_COLOR + ";");
+
+
+
+        // ── HEADER ──────────────────────────────────────────────────────────
+
+        HBox header = buildHeader(root);
+
+        root.setTop(header);
+
+
+
+        // ── SIDEBAR ─────────────────────────────────────────────────────────
+
+        VBox sidebar = buildSidebar();
+
+        root.setLeft(sidebar);
+
+
+
+        // ── CONTENT AREA ────────────────────────────────────────────────────
+
+        contentArea = new StackPane();
+
+        contentArea.setPadding(new Insets(28));
+
+        root.setCenter(contentArea);
+
+
+
+        // ── Build page instances ─────────────────────────────────────────────
+
+        dashboardPage   = new DashboardPage();
+
+        manageItemsPage = new ManageItemsPage(window, itemDAO, activityDAO, claimDAO, this::refreshTableAndStats);
+
+        ClaimsPage  claimsPage  = new ClaimsPage(claimDAO, itemDAO, this::refreshTableAndStats);
+
+        ProfilePage profilePage = new ProfilePage();
+
+
+
+        // ── Sidebar nav wiring ───────────────────────────────────────────────
+
+        boolean isAdmin = Session.getCurrentUser().getRole().equalsIgnoreCase("Admin");
+
+
+
+        Button navDash      = UIComponents.createNavBtn("📊", "Dashboard");
+
+        Button navManage    = UIComponents.createNavBtn("📦", isAdmin ? "Manage Items" : "Report / View Items");
+
+        Button navClaimsBtn = UIComponents.createNavBtn("📋", isAdmin ? "Manage Claims" : "My Claim History");
+
+        Button navProfile   = UIComponents.createNavBtn("👤", "My Profile");
+
+        Button navLogout    = UIComponents.createNavBtn("🚪", "Logout");
+
+
+
+        navDash.setOnAction(e      -> contentArea.getChildren().setAll(dashboardPage.getView()));
+
+        navManage.setOnAction(e    -> contentArea.getChildren().setAll(manageItemsPage.getView()));
+
+        navClaimsBtn.setOnAction(e -> contentArea.getChildren().setAll(claimsPage.getView()));
+
+        navProfile.setOnAction(e   -> contentArea.getChildren().setAll(profilePage.getView()));
+
+        navLogout.setOnAction(e    -> { Session.logout(); window.setScene(loginScene); });
+
+
+
+        // Retrieve the sidebar's nav section (VBox child index 1 = navSection)
+
+        VBox navSection = (VBox) sidebar.getChildren().get(1);
+
+        navSection.getChildren().addAll(navDash, navManage, navClaimsBtn, navProfile);
+
+
+
+        Region spacer = new Region();
+
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        sidebar.getChildren().addAll(spacer, navLogout, buildSidebarUserBadge());
+
+
+
+        // ── Initial page ─────────────────────────────────────────────────────
+
+        contentArea.getChildren().setAll(dashboardPage.getView());
+
+        refreshTableAndStats();
+
+
+
+        mainScene = new Scene(root, 1280, 800);
+
+    }

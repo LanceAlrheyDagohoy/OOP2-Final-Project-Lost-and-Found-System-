@@ -215,3 +215,53 @@ public class CITUFindFX extends Application {
         mainScene = new Scene(root, 1280, 800);
 
     }
+    
+    // ════════════════════════════════════════════════════════════════════════
+    //  HEADER
+    // ════════════════════════════════════════════════════════════════════════
+    private HBox buildHeader(BorderPane root) {
+        HBox header = new HBox();
+        header.setPadding(new Insets(0, 28, 0, 0));
+        header.setPrefHeight(64);
+        header.setAlignment(Pos.CENTER_RIGHT);
+        header.setStyle(
+                "-fx-background-color: " + Theme.WHITE + ";" +
+                        "-fx-border-color: transparent transparent #E5E7EB transparent;" +
+                        "-fx-border-width: 0 0 1 0;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6, 0, 0, 2);"
+        );
+
+        ToggleButton btnDark = new ToggleButton("🌙  Dark Mode");
+        btnDark.setStyle(
+                "-fx-background-color: " + Theme.SURFACE + ";" +
+                        "-fx-border-color: #D1D5DB;" +
+                        "-fx-border-radius: 20px;" +
+                        "-fx-background-radius: 20px;" +
+                        "-fx-padding: 6px 16px;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-cursor: hand;"
+        );
+        btnDark.setOnAction(e -> {
+            isDarkMode = btnDark.isSelected();
+            UIComponents.applyTheme(root, isDarkMode);
+            btnDark.setText(isDarkMode ? "☀  Light Mode" : "🌙  Dark Mode");
+        });
+
+        Label lblUser = new Label(
+                "👤  " + Session.getCurrentUser().getName() + "  ·  " + Session.getCurrentUser().getRole()
+        );
+        lblUser.setStyle(
+                "-fx-background-color: " + Theme.MAROON + ";" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 20px;" +
+                        "-fx-padding: 6px 18px;"
+        );
+
+        HBox rightGroup = new HBox(14, btnDark, lblUser);
+        rightGroup.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(rightGroup, Priority.ALWAYS);
+        header.getChildren().add(rightGroup);
+        return header;
+    }

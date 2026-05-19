@@ -6,7 +6,8 @@ Use-Case Diagram
 
 
 Planned-Case Diagram
-<img width="1440" height="1394" alt="image" src="https://github.com/user-attachments/assets/dccb1835-5130-4055-be8b-1545013ba131" />
+<img width="1122" height="1402" alt="file_00000000eaec7207a77b1c3095409412" src="https://github.com/user-attachments/assets/a98f6143-4ed9-4695-a007-52eb815469b4" />
+
 
 
 
